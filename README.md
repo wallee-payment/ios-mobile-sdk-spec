@@ -376,7 +376,7 @@ func getDarkTheme() -> NSMutableDictionary{
 In case you want to distribute an application with the WalleePaymentSdk and you encounter the issue:
 **Invalid Bundle, The bundle contains disallowed nested bundles, contains disallowed file 'Frameworks'**
 
-![Invalid Bundle](sdkDocumentation/imgs/iosInvalidBundle.png)
+![Invalid Bundle](imgs/iosInvalidBundle.png)
 
 Add the following script in the Main Target -> Build Phases -> Run Script:
 
@@ -429,7 +429,7 @@ if [ "${CONFIGURATION}" == "Debug" ] & [ "${SDKROOT}" != *Simulator* ] ; then
 fi
 ```
 
-![MainTargetScript](sdkDocumentation/imgs/iosWorkaroundScript.png)
+![MainTargetScript](imgs/iosWorkaroundScript.png)
 
 More details about this issue can be found also on:
 
