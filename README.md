@@ -16,10 +16,11 @@
 - [Default themes](#default-themes)
 - [Light theme](#light-theme)
 - [Dark theme](#dark-theme)
+- [Known Issues](#known-issues)
 
 # [ios] WalleePaymentSdk
 
-[ios SDK Release on GitHub](https://github.com/wallee-payment/ios-mobile-sdk/releases/tag/0.1.0)
+[ios SDK Release on GitHub](https://github.com/WhiteLabelGithubOwnerName/ios-mobile-sdk/releases/tag/0.1.0)
 
 ## API reference
 
@@ -42,14 +43,14 @@
 
 Import the SDK to your app as [Cocoapod](https://cocoapods.org/)
 
-`pod ‘WalleePaymentSdk’, '1.0.0' :source=> ‘https://github.com/wallee-payment/ios-mobile-sdk.git’`
+`pod ‘WalleePaymentSdk’, '1.0.0' :source=> ‘https://github.com/WhiteLabelGithubOwnerName/ios-mobile-sdk.git’`
 
 ```sh
 target 'DemoApp' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  pod ‘WalleePaymentSdk’, '1.0.0' :source=> ‘https://github.com/wallee-payment/ios-mobile-sdk.git’`
+  pod ‘WalleePaymentSdk’, '1.0.0' :source=> ‘https://github.com/WhiteLabelGithubOwnerName/ios-mobile-sdk.git’`
   target 'DemoAppTests' do
     inherit! :search_paths
   end
@@ -257,7 +258,7 @@ walleePaymentSdk.setCustomTheme(custom: getNewCustomTheme(), baseTheme: .LIGHT)
 
 ### Colors
 
-![Payment method list](imgs/theme-1.jpeg) ![Payment method details](imgs/theme-2.jpeg) ![Pyament method additional details](imgs/theme-3.jpeg)
+![Payment method list](sdkDocumentation/imgs/theme-1.jpeg) ![Payment method details](sdkDocumentation/imgs/theme-2.jpeg) ![Pyament method additional details](sdkDocumentation/imgs/theme-3.jpeg)
 
 ### Default themes
 
@@ -367,3 +368,71 @@ func getDarkTheme() -> NSMutableDictionary{
     return darkTheme
 }
 ```
+
+### Known issues
+
+## Invalid Bundle, The bundle contains disallowed nested bundles, contains disallowed file 'Frameworks'
+
+In case you want to distribute an application with the WalleePaymentSdk and you encounter the issue:
+**Invalid Bundle, The bundle contains disallowed nested bundles, contains disallowed file 'Frameworks'**
+
+![Invalid Bundle](sdkDocumentation/imgs/iosInvalidBundle.png)
+
+Add the following script in the Main Target -> Build Phases -> Run Script:
+
+```shell
+if ! [ "${CONFIGURATION}" == "Release" ] ; then
+
+    echo "early exit"
+    exit 0
+fi
+
+cd "${CODESIGNING_FOLDER_PATH}/Frameworks/"
+
+# copy frameworks to TeamworkProjects.app/Frameworks
+for framework in *; do
+if [ -d "$framework" ]; then
+if [ -d "${framework}/Frameworks" ]; then
+echo "Moving embedded frameworks from ${framework} to ${PRODUCT_NAME}.app/Frameworks"
+cp -R "${framework}/Frameworks/" .
+rm -rf "${framework}/Frameworks"
+fi
+fi
+done
+
+# remove leftover nested frameworks
+for framework in *; do
+if [ -d "$framework" ]; then
+if [ -d "${framework}/Frameworks" ]; then
+echo "Removing embedded frameworks from ${framework} to ${PRODUCT_NAME}.app/Frameworks"
+rm -rf "${framework}/Frameworks"
+fi
+fi
+done
+
+# Remove Frameworks from PlugIns
+cd "${CODESIGNING_FOLDER_PATH}"
+find ./PlugIns -type d -name Frameworks | xargs rm -rf
+
+# codesign for Debugging on device
+if [ "${CONFIGURATION}" == "Debug" ] & [ "${SDKROOT}" != *Simulator* ] ; then
+
+    echo "Code signing frameworks..."
+    find "${CODESIGNING_FOLDER_PATH}/Frameworks" -maxdepth 1 -name '*.framework' -print0 | while read -d $'\0' framework
+    do
+        # only sign frameworks without a signature
+        if ! codesign -v "${framework}"; then
+            codesign --force --sign "${EXPANDED_CODE_SIGN_IDENTITY}" --preserve-metadata=identifier,entitlements --timestamp=none "${framework}"
+            echo "Added missing signature to '${framework}'"
+        fi
+    done
+fi
+```
+
+![MainTargetScript](sdkDocumentation/imgs/iosWorkaroundScript.png)
+
+More details about this issue can be found also on:
+
+[Stack Overflow](https://stackoverflow.com/questions/30361864/invalid-bundle-the-bundle-contains-disallowed-nested-bundles-contains-disallow)
+
+[forums.swift.org](https://forums.swift.org/t/swift-packages-in-multiple-targets-results-in-this-will-result-in-duplication-of-library-code-errors/34892/57)
