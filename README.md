@@ -19,11 +19,7 @@
 
 # [ios] WalleePaymentSdk
 
-<<<<<<< HEAD
-[ios SDK Release on GitHub](https://github.com/wallee-payment/ios-mobile-sdk/releases/tag/0.1.0)
-=======
 [ios SDK Release on GitHub](https://github.com/wallee-payment/ios-mobile-sdk/releases/tag/1.0.2)
->>>>>>> 4a1e16d0 (Resolve WAL-107156)
 
 ## API reference
 
