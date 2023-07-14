@@ -1,36 +1,38 @@
 # Table of contents
 
-- [iOS WalleePaymentSdk](#ios-walleepaymentsdk)
-- [API reference](#api-reference)
-- [Installation](#installation)
-- [Requirements](#requirements)
-- [Configuration](#configuration)
-- [Integration](#integration)
-- [Set up wallee](#set-up-wallee)
-- [Create transaction](#create-transaction)
-- [Collect payment details](#collect-payment-details)
-- [Handle result](#handle-result)
-- [Verify payment](#verify-payment)
-- [Theming](#theming)
-- [Colors](#colors)
-- [Default themes](#default-themes)
-- [Light theme](#light-theme)
-- [Dark theme](#dark-theme)
+- [Table of contents](#table-of-contents)
+- [\[ios\] WalleePaymentSdk](#ios-walleepaymentsdk)
+  - [API reference](#api-reference)
+  - [Installation](#installation)
+    - [Requirements](#requirements)
+    - [Configuration](#configuration)
+  - [Integration](#integration)
+    - [Set up Wallee](#set-up-wallee)
+    - [Create transaction](#create-transaction)
+    - [Collect payment details](#collect-payment-details)
+    - [Handle result](#handle-result)
+    - [Verify payment](#verify-payment)
+  - [Theming](#theming)
+    - [Colors](#colors)
+    - [Default themes](#default-themes)
+      - [Light theme](#light-theme)
+      - [Dark theme](#dark-theme)
 
 # [ios] WalleePaymentSdk
 
-[ios SDK Release on GitHub](https://github.com/wallee-payment/ios-mobile-sdk/releases/tag/1.0.3)
+[ios SDK Release on GitHub](https://github.com/wallee-payment/ios-mobile-sdk/releases/tag/1.1.0)
 
 ## API reference
 
-| API                                                                           | Type                        | Description                                                    | 
-|-------------------------------------------------------------------------------|-----------------------------|----------------------------------------------------------------|
-| WalleePaymentResultObserver                                                   | protocol                    | Protocol for handling post-payment events `paymentResult`      |
-| `func paymentResult(paymentResultMessage: PaymentResult)`                     | function                    | Result handler for transaction state                           |
-| `func launchPayment(token: String, rootController: UIViewController)`         | function                    | Opening payment dialog (activity)                              |
-| `func setDarkTheme(dark: NSMutableDictionary)`                                | function                    | Can override the whole dark theme or just some specific color. |
-| `func setLightTheme(light: NSMutableDictionary)`                              | function                    | Can override the whole light theme or just some specific color. |
-| `func setCustomTheme(custom: NSMutableDictionary/nill, baseTheme: ThemeEnum)` | function     | Force to use only this theme (independent on user's setup). Can override default light/dark theme and force to use it or completely replace all or specific colors (DARK/LIGHT) |
+| API | Type | Description |
+| --- | --- | --- |
+| WalleePaymentResultObserver | protocol | Protocol for handling post-payment events `paymentResult` |
+| `func paymentResult(paymentResultMessage: PaymentResult)` | function | Result handler for transaction state |
+| `func launchPayment(token: String, rootController: UIViewController)` | function | Opening payment dialog (activity) |
+| `func setDarkTheme(dark: NSMutableDictionary)` | function | Can override the whole dark theme or just some specific color. |
+| `func setLightTheme(light: NSMutableDictionary)` | function | Can override the whole light theme or just some specific color. |
+| `func setCustomTheme(custom: NSMutableDictionary/nill, baseTheme: ThemeEnum)` | function | Force to use only this theme (independent on user's setup). Can override default light/dark theme and force to use it or completely replace all or specific colors (DARK/LIGHT) |
+| `func presentModalView(isPresented: Binding<Bool>, token: Binding<String>)` | extension | SwiftUI View modifier to present the UI part of the Payment SDK |
 
 ## Installation
 
@@ -42,14 +44,14 @@
 
 Import the SDK to your app as [Cocoapod](https://cocoapods.org/)
 
-`pod ‘WalleePaymentSdk’, '1.0.3' :source=> ‘https://github.com/wallee-payment/ios-mobile-sdk-spec.git’`
+`pod ‘WalleePaymentSdk’, '1.1.0' :source=> ‘https://github.com/wallee-payment/ios-mobile-sdk-spec.git’`
 
 ```sh
 target 'DemoApp' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  pod ‘WalleePaymentSdk’, '1.0.3' :source=> ‘https://github.com/wallee-payment/ios-mobile-sdk-spec.git’`
+  pod ‘WalleePaymentSdk’, '1.1.0' :source=> ‘https://github.com/wallee-payment/ios-mobile-sdk-spec.git’`
   target 'DemoAppTests' do
     inherit! :search_paths
   end
@@ -61,23 +63,15 @@ end
 
 ### Set up Wallee
 
-To use the iOS Payment SDK, you need a [wallee account](https://app-wallee.com/user/signup). After signing up, set up
-your space and enable the payment methods you would like to support.
+To use the iOS Payment SDK, you need a [wallee account](https://app-wallee.com/user/signup). After signing up, set up your space and enable the payment methods you would like to support.
 
 ### Create transaction
 
-For security reasons, your app cannot create transactions and fetch access tokens. This has to be done on your server by
-talking to the [wallee Web Service API](https://app-wallee.com/en-us/doc/api/web-service). You can use one of the
-official SDK libraries to make these calls.
+For security reasons, your app cannot create transactions and fetch access tokens. This has to be done on your server by talking to the [wallee Web Service API](https://app-wallee.com/en-us/doc/api/web-service). You can use one of the official SDK libraries to make these calls.
 
-To use the iOS Payment SDK to collect payments, an endpoint needs to be added on your server that creates a transaction
-by calling the [create transaction](https://app-wallee.com/doc/api/web-service#transaction-service--create) API
-endpoint. A transaction holds information about the customer and the line items and tracks charge attempts and the
-payment state.
+To use the iOS Payment SDK to collect payments, an endpoint needs to be added on your server that creates a transaction by calling the [create transaction](https://app-wallee.com/doc/api/web-service#transaction-service--create) API endpoint. A transaction holds information about the customer and the line items and tracks charge attempts and the payment state.
 
-Once the transaction has been created, your endpoint can fetch an access token by calling
-the [create transaction credentials](https://app-wallee.com/doc/api/web-service#transaction-service--create-transaction-credentials)
-API endpoint. The access token is returned and passed to the iOS Payment SDK.
+Once the transaction has been created, your endpoint can fetch an access token by calling the [create transaction credentials](https://app-wallee.com/doc/api/web-service#transaction-service--create-transaction-credentials) API endpoint. The access token is returned and passed to the iOS Payment SDK.
 
 ```bash
 # Create a transaction
@@ -92,8 +86,9 @@ curl 'https://app-wallee.com/api/transaction/createTransactionCredentials?spaceI
 
 ### Collect payment details
 
-Before launching the iOS Payment SDK to collect the payment, your checkout page should show the total amount, the
-products that are being purchased and a checkout button to start the payment process.
+#### Basic usage Swift (Storyboard)
+
+Before launching the iOS Payment SDK to collect the payment, your checkout page should show the total amount, the products that are being purchased and a checkout button to start the payment process.
 
 Let your checkout activity extend `WalleePaymentResultObserver`, add the necessary function `paymentResult`.
 
@@ -101,7 +96,7 @@ Let your checkout activity extend `WalleePaymentResultObserver`, add the necessa
 import UIKit
 import WalleePaymentSdk
 
-class ViewController : UIViewController, WalleePaymentResultObserver { 
+class ViewController : UIViewController, WalleePaymentResultObserver {
 
     func paymentResult(paymentResultMessage: PaymentResult)
     {
@@ -110,28 +105,7 @@ class ViewController : UIViewController, WalleePaymentResultObserver {
 }
 ```
 
-Initialize the `WalleePaymentSdk` instance inside `viewDidLoad` of your checkout activity.
-
-```swift
-// ...
-import UIKit
-import WalleePaymentSdk
-
-class ViewController: UIViewController, WalleePaymentResultObserver {
-    
-    var walleePaymentSdk: WalleePaymentSdk
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        ...
-        walleePaymentSdk = WalleePaymentSdk(eventObserver: self)
-    }
-    // ...
-}
-```
-
-When the customer taps the checkout button, call your endpoint that creates the transaction and returns the access
-token, and launch the payment dialog.
+When the customer taps the checkout button, call your endpoint that creates the transaction and returns the access token, initialize the `WalleePaymentSdk` instance and launch the payment dialog.
 
 ```swift
 // ...
@@ -156,17 +130,52 @@ class ViewController : UIViewController, WalleePaymentResultObserver {
 
 After the customer completes the payment, the dialog dismisses and the `paymentResult` method is called.
 
+#### Basic usage SwiftUI
+
+First of all make sure you import the `WalleePaymentSdk` package and initialize it in relevant class. You also need to extend the class with `WalleePaymentResultObserver` to able to receive the result of payment:
+
+```swift
+// PaymentManager.swift
+import WalleePaymentSdk
+...
+class PaymentManager: WalleePaymentResultObserver {
+...
+func onOpenSdkPress(){
+    let wallee = WalleePaymentSdk(eventObserver: self)
+    ...
+    }
+}
+```
+
+To display the UI of Payment SDK make sure you import the `WalleePaymentSdk` into the relevant View:
+
+```swift
+// ContentView.swift
+import WalleePaymentSdk
+...
+    Button {
+       // add code for generating transaction and fetching the token
+       isModalPresented = true
+    } label: {
+        Text("Checkout")
+    }
+    .presentModalView(isPresented: isModalPresented, token: token)
+```
+
+Use presentModalView custom modifier for the UI part, passing two arguments: `isPresented` (modal presented state) and `token`.
+
 ### Handle result
 
 The response object contains these properties:
 
 - `code` describing the result's type.
 
-| Code                                                                     | Description                                                                                                                                                    | 
-|--------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `COMPLETED`                                                              | The payment was successful.                                                                                                         |
-| `FAILED`                                                                 | The payment failed. Check the `message` for more information.                                                                                                                         |
-| `CANCELED`                                                               | The customer canceled the payment.                                                                                                                              |
+| Code | Description |
+| --- | --- |
+| `COMPLETED` | The payment was successful. |
+| `FAILED` | The payment failed. Check the `message` for more information. |
+| `CANCELED` | The customer canceled the payment. |
+| `UNCLEAR` | The customer has aborted the payment process, so the payment is in a temporarily unclear state. It will eventually reach a final status (successful or failed), but it may take a while. Wait for a webhook notification and use the Wallee API to retrieve the status of the transaction and inform the customer that the payment is unclear. |
 
 - `message` providing a localized error message that can be shown to the customer.
 
@@ -176,7 +185,7 @@ import WalleePaymentSdk
 
 class ViewController: UIViewController, WalleePaymentResultObserver {
     // ...
-    
+
     @IBOutlet var resultCallbackText: UILabel?
 
     func paymentResult(paymentResultMessage: PaymentResult) {
@@ -194,23 +203,17 @@ class ViewController: UIViewController, WalleePaymentResultObserver {
 
 ### Verify payment
 
-As customers could quit the app or lose network connection before the result is handled or malicious clients could
-manipulate the response, it is strongly recommended to set up your server to listen for webhook events the get
-transactions' actual states. Find more information in
-the [webhook documentation](https://app-wallee.com/en-us/doc/webhooks).
+As customers could quit the app or lose network connection before the result is handled or malicious clients could manipulate the response, it is strongly recommended to set up your server to listen for webhook events the get transactions' actual states. Find more information in the [webhook documentation](https://app-wallee.com/en-us/doc/webhooks).
 
 ## Theming
 
-The appearance of the payment dialog can be customized to match the look and feel of your app. This can be done for both
-the light and dark theme individually.
+The appearance of the payment dialog can be customized to match the look and feel of your app. This can be done for both the light and dark theme individually.
 
-Colors can be modified by passing a JSON object to the `WalleePaymentSdk` instance. You can either completely override
-the theme or only change certain colors.
+Colors can be modified by passing a JSON object to the `WalleePaymentSdk` instance. You can either completely override the theme or only change certain colors.
 
 - `walleePaymentSdk.setLightTheme(NSMutableDictionary)` allows to modify the payment dialog's light theme.
 - `walleePaymentSdk.setDarkTheme(NSMutableDictionary)` allows to modify the payment dialog's dark theme.
-- `walleePaymentSdk.setCustomTheme(NSMutableDictionary|| nil, ThemeEnum)` allows to enforce a specific theme (dark,
-  light or your own).
+- `walleePaymentSdk.setCustomTheme(NSMutableDictionary|| nil, ThemeEnum)` allows to enforce a specific theme (dark, light or your own).
 
 ```swift
 // ...
@@ -221,7 +224,7 @@ import WalleePaymentSdk
 class ViewController : UIViewController, WalleePaymentResultObserver {
 
     let walleePaymentSdk = WalleePaymentSdk (eventObserver: self)
-    
+
     @IBAction func openSdkClick()
     {
         ....
@@ -237,13 +240,9 @@ class ViewController : UIViewController, WalleePaymentResultObserver {
 }
 ```
 
-This overrides the colors `colorBackground`, `colorText`, `colorHeadingText` and `colorError` for both the dark and
-light theme.
+This overrides the colors `colorBackground`, `colorText`, `colorHeadingText` and `colorError` for both the dark and light theme.
 
-The `changeColorSchema` function allows to define the theme to be used by the payment dialog and prevent it from
-switching themes based on the user's settings.
-This way e.g. high-contrast and low-contrast themes can be added. The logic for
-switching between these themes is up to you though.
+The `changeColorSchema` function allows to define the theme to be used by the payment dialog and prevent it from switching themes based on the user's settings. This way e.g. high-contrast and low-contrast themes can be added. The logic for switching between these themes is up to you though.
 
 You can also use `setCustomTheme` to force the usage of the light or dark theme.
 
@@ -263,14 +262,13 @@ walleePaymentSdk.setCustomTheme(custom: getNewCustomTheme(), baseTheme: .LIGHT)
 
 #### Light theme
 
-The theme can be provided via a function that returns an NSMutableDictionary object that holds the key-value pair for
-the colors.
+The theme can be provided via a function that returns an NSMutableDictionary object that holds the key-value pair for the colors.
 
 ```swift
 func getLightTheme() -> NSMutableDictionary {
 
    let lightTheme = NSMutableDictionary()
-   
+
    lightTheme.setValue("#3b82f6", forKey: "colorPrimary")
    lightTheme.setValue("#ffffff", forKey: "colorBackground")
    lightTheme.setValue("#374151", forKey: "colorText")
@@ -322,14 +320,14 @@ func getLightTheme() -> NSMutableDictionary {
 func getDarkTheme() -> NSMutableDictionary{
 
     let darkTheme = NSMutableDictionary()
-    
+
     darkTheme.setValue("#3b82f6", forKey: "colorPrimary")
     darkTheme.setValue("#1f2937", forKey: "colorBackground")
     darkTheme.setValue("#e5e7eb", forKey: "colorText")
     darkTheme.setValue("#9ca3af", forKey: "colorSecondaryText")
     darkTheme.setValue("#f9fafb", forKey: "colorHeadingText")
     darkTheme.setValue("#ef4444", forKey: "colorError")
-    
+
     let component = NSMutableDictionary()
     component.setValue("#374151", forKey: "colorBackground")
     component.setValue("#6b7280", forKey: "colorBorder")
@@ -341,24 +339,24 @@ func getDarkTheme() -> NSMutableDictionary{
     component.setValue("#9ca3af", forKey: "colorSelectedBorder")
     component.setValue("#9ca3af", forKey: "colorDisabledBackground")
     darkTheme.setValue(component, forKey: "component")
-    
+
     let buttonPrimary = NSMutableDictionary()
     buttonPrimary.setValue("#2563eb", forKey: "colorBackground")
     buttonPrimary.setValue("#ffffff", forKey: "colorText")
     buttonPrimary.setValue("#1d4ed8", forKey: "colorHover")
     darkTheme.setValue(buttonPrimary, forKey: "buttonPrimary")
-    
+
     let buttonSecondary = NSMutableDictionary()
     buttonSecondary.setValue("#6b7280", forKey: "colorBackground")
     buttonSecondary.setValue("#f3f4f6", forKey: "colorText")
     buttonSecondary.setValue("#4b5563", forKey: "colorHover")
     darkTheme.setValue(buttonSecondary, forKey: "buttonSecondary")
-    
+
     let buttonText = NSMutableDictionary()
     buttonText.setValue("#9ca3af", forKey: "colorText")
     buttonText.setValue("#d1d5db", forKey: "colorHover")
     darkTheme.setValue(buttonText, forKey: "buttonText")
-    
+
     let buttonIcon = NSMutableDictionary()
     buttonIcon.setValue("#d1d5db", forKey: "colorText")
     buttonIcon.setValue("#f3f4f6", forKey: "colorHover")
