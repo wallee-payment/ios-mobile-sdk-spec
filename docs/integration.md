@@ -70,7 +70,7 @@ class ViewController : UIViewController, WalleePaymentResultObserver {
     {
         paymentSdk = WalleePaymentSdk(eventObserver: self)
         ...
-        paymentSdk.launchPayment(token: _token, rootController: self)
+        paymentSdk.launchPayment(token: _token)
     }
 
     // ...
