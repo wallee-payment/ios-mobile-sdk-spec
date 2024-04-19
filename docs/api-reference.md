@@ -14,3 +14,4 @@
 | `func presentModalView(isPresented: Binding<Bool>, token: Binding<String>)` | extension | **Abandoned from v1.2.2.** SwiftUI View modifier to present the UI part of the Payment SDK. |
 | `func setAnimation(type: AnimationEnum)` | function | Defining type of animation for moving between the pages |
 | `func configureApplePay(merchantId: String)` | function | Configuring ApplePay Merchant ID which is going to be used to process payments (requires additional portal configuration, see [Apple Pay integration](./apple-pay.md)) |
+| `func configureDeepLink(deepLink: String)` | function | Implementing deep linking functionality within payment applications to seamlessly redirect users back to the customer app upon completion of transactions. |

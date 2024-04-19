@@ -12,24 +12,24 @@
 
 ## Set up Wallee
 
-To use the iOS Payment SDK, you need a [wallee account](https://app-wallee.com/user/signup). After signing up, set up your space and enable the payment methods you would like to support.
+To use the iOS Payment SDK, you need a [wallee account](walleeAppUrlPlaceholder/user/signup). After signing up, set up your space and enable the payment methods you would like to support.
 
 ## Create transaction
 
-For security reasons, your app cannot create transactions and fetch access tokens. This has to be done on your server by talking to the [wallee Web Service API](https://app-wallee.com/en-us/doc/api/web-service). You can use one of the official SDK libraries to make these calls.
+For security reasons, your app cannot create transactions and fetch access tokens. This has to be done on your server by talking to the [wallee Web Service API](walleeAppUrlPlaceholder/en-us/doc/api/web-service). You can use one of the official SDK libraries to make these calls.
 
-To use the iOS Payment SDK to collect payments, an endpoint needs to be added on your server that creates a transaction by calling the [create transaction](https://app-wallee.com/doc/api/web-service#transaction-service--create) API endpoint. A transaction holds information about the customer and the line items and tracks charge attempts and the payment state.
+To use the iOS Payment SDK to collect payments, an endpoint needs to be added on your server that creates a transaction by calling the [create transaction](walleeAppUrlPlaceholder/doc/api/web-service#transaction-service--create) API endpoint. A transaction holds information about the customer and the line items and tracks charge attempts and the payment state.
 
-Once the transaction has been created, your endpoint can fetch an access token by calling the [create transaction credentials](https://app-wallee.com/doc/api/web-service#transaction-service--create-transaction-credentials) API endpoint. The access token is returned and passed to the iOS Payment SDK.
+Once the transaction has been created, your endpoint can fetch an access token by calling the [create transaction credentials](walleeAppUrlPlaceholder/doc/api/web-service#transaction-service--create-transaction-credentials) API endpoint. The access token is returned and passed to the iOS Payment SDK.
 
 ```bash
 # Create a transaction
-curl 'https://app-wallee.com/api/transaction/create?spaceId=1' \
+curl 'walleeAppUrlPlaceholder/api/transaction/create?spaceId=1' \
   -X "POST" \
   -d "{{TRANSACTION_DATA}}"
 
 # Fetch an access token for the created transaction
-curl 'https://app-wallee.com/api/transaction/createTransactionCredentials?spaceId={{SPACE_ID}}&id={{TRANSACTION_ID}}' \
+curl 'walleeAppUrlPlaceholder/api/transaction/createTransactionCredentials?spaceId={{SPACE_ID}}&id={{TRANSACTION_ID}}' \
   -X 'POST'
 ```
 
@@ -173,7 +173,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 ```
 
-For Twint integration you have to setup `URL types` and `Queried URL Schemes` in your app `Info.plist`.
+For Twint integration you have to setup `URL types` and `Queried URL Schemes` in your app `Info.plist` and pass deep link into SDK
+
+```javascript
+
+func foo(){
+    let sdk = WalleePaymentSdk(eventObserver: self)
+    ...
+    sdk.configureDeepLink(deepLink: "uniq-payment-deep-link")
+    ...
+}
+
+```
 
 <mark style="background-color: red"> :bangbang: :warning: Please note that this is essential to invoke TWINT. :warning: :bangbang: </mark>
 
@@ -185,7 +196,7 @@ For Twint integration you have to setup `URL types` and `Queried URL Schemes` in
    <string>Editor</string>
    <key>CFBundleURLSchemes</key>
    <array>
-    <string>twint-payment</string>
+    <string>uniq-payment-deep-link</string>
    </array>
   </dict>
  </array>
@@ -249,4 +260,4 @@ For Twint integration you have to setup `URL types` and `Queried URL Schemes` in
 
 ## Verify payment
 
-As customers could quit the app or lose network connection before the result is handled or malicious clients could manipulate the response, it is strongly recommended to set up your server to listen for webhook events the get transactions' actual states. Find more information in the [webhook documentation](https://app-wallee.com/en-us/doc/webhooks).
+As customers could quit the app or lose network connection before the result is handled or malicious clients could manipulate the response, it is strongly recommended to set up your server to listen for webhook events the get transactions' actual states. Find more information in the [webhook documentation](walleeAppUrlPlaceholder/en-us/doc/webhooks).

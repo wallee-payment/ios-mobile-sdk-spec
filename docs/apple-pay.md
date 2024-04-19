@@ -1,12 +1,12 @@
 # Apple Pay integrating
 
 - [Apple Pay integrating](#apple-pay-integrating)
-- [Create Merchant ID and signed certificate](#create-merchant-id-and-signed-certificate)
-- [Extract private key from KeyChain](#extract-private-key-from-keychain)
-- [Upload certificate to Wallee Portal](#upload-certificate-to-wallee-portal)
-- [Set up Merchant ID in Mobile SDK configuration](#setup-applepay-sdk-config)
+  - [Create Merchant ID and signed certificate](#create-merchant-id-and-signed-certificate)
+  - [Extract private key from KeyChain](#extract-private-key-from-keychain)
+  - [Upload certificate to Portal](#upload-certificate-to-portal)
+  - [Set up Merchant ID in Mobile SDK configuration](#set-up-merchant-id-in-mobile-sdk-configuration)
 
-To use Apple Pay as a payment method, you must create a Merchant ID and the corresponding certificate. And upload the certificate to the wallee portal. In this section we will show you how to create a Merchent ID and how to get the certificate. If you do not want to use Apple pay you can ignore this section.
+To use Apple Pay as a payment method, you must create a Merchant ID and the corresponding certificate. And upload the certificate to the portal. In this section we will show you how to create a Merchent ID and how to get the certificate. If you do not want to use Apple pay you can ignore this section.
 
 ### Create Merchant ID and signed certificate
 
@@ -20,7 +20,7 @@ To use Apple Pay as a payment method, you must create a Merchant ID and the corr
 8. Now you have to create and upload `Certificate Signing Request`. Open `Keychain Access` on you Mac and go to top bar menu `Keychain Access => Certificate Assistant => Request a Certificate From a Certificate Authority...` ![Keychain Access](../imgs/apple-pay-8.png)
 9. Now you have to fill basic information about certificate request and select `Saved to disk` and also check `Let me specify key pair information` and click on `Continue` ![Certificate request basic info](../imgs/apple-pay-9.png)
 10. In next window you have to specify type of certificate request you have to select `Algorithm: ECC` and `Key Size: 256 bits` then you can click on `Continue` and save your certificate request to disk ![Certificate type](../imgs/apple-pay-10.png)
-11. Now you have to upload saved certificate request to apple developer page and click on `Continue` ![Upload certificate request](../imgs/apple-pay-11.png) 12.Your certificate was successfully created. You can download it. Next step will be uploading this certification to [Wallee Portal](#upload-certificate-to-wallee-portal). ![Certificate type](../imgs/apple-pay-12.png)
+11. Now you have to upload saved certificate request to apple developer page and click on `Continue` ![Upload certificate request](../imgs/apple-pay-11.png) 12.Your certificate was successfully created. You can download it. Next step will be uploading this certification to [Portal](#upload-certificate-to-portal). ![Certificate type](../imgs/apple-pay-12.png)
 
 ### Extract private key from KeyChain
 
@@ -28,11 +28,11 @@ To use Apple Pay as a payment method, you must create a Merchant ID and the corr
 2. Right click at your private key and select option `Export YOUR CERTIFICATE NAME` ![Private key extraction](../imgs/apple-pay-14.png)
 3. You have to save this private key as `Personal Information Exchange (.p12)` format. ![Private key p12](../imgs/apple-pay-15.png)
 4. After saving this certificate you will be asked to create a password. Keep the password field empty! And continue by pressing `OK` ![Private key password](../imgs/apple-pay-16.png)
-5. Next step is just confirm action with your personal password and after conformation you will get `.p12` certificate. This certificate has to be uploaded to [Wallee Portal](#upload-certificate-to-wallee-portal)
+5. Next step is just confirm action with your personal password and after conformation you will get `.p12` certificate. This certificate has to be uploaded to [Portal](#upload-certificate-to-portal)
 
-### Upload certificate to Wallee Portal
+### Upload certificate to Portal
 
-1. Open Wallee Portal => Space => Select Relevant Space => Settings
+1. Open Portal => Space => Select Relevant Space => Settings
 2. On the top menu select Payment => ApplePay ![ApplePay Settings](../imgs/apple-pay-17.png)
 3. Make sure ApplePay is enabled
 4. Click Payment Processing Certificate ![ApplePay Certificate Menu](../imgs/apple-pay-18.png)
