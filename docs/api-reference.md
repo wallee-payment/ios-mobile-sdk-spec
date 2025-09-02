@@ -4,8 +4,8 @@
 | --- | --- | --- |
 | WalleePaymentResultObserver | protocol | Protocol for handling post-payment events `paymentResult` |
 | `func paymentResult(paymentResultMessage: PaymentResult)` | function | Result handler for transaction state |
-| `func launchPayment(token: String)` | function | Opening payment dialog (activity) |
-| `func launchPayment(token: String, isSwiftUI: Bool)` | function | Opening payment dialog (activity) in **SwiftUI** |
+| `func launchPayment(token: String, paymentMethodConfigurationIdValue: Int? = nil)` | function | Opening payment dialog (activity),paymentMethodConfigurationId is numeric name of payment method or can be nil |
+| `func launchPayment(token: String, isSwiftUI: Bool, paymentMethodConfigurationIdValue: Int? = nil)` | function | Opening payment dialog (activity), paymentMethodConfigurationId is numeric name of payment method or can be nil in **SwiftUI** |
 | `func launchPayment(token: String, rootController: UIViewController)` | function | **Abandoned from v1.2.2.** Opening payment dialog (activity). |
 | `func onHandleOpenURL(url: URL)` | function | this function is for handling deep link. It has to be called in [SceneDelegate](https://developer.apple.com/documentation/uikit/uiscenedelegate/3238059-scene) or [AppDelegate](https://developer.apple.com/documentation/uikit/uiapplicationdelegate/1623112-application?language=objc). Without this implementation SDK isn't able to send current response when transaction is complete. Returning `true` when all is set up correctly |
 | `func setDarkTheme(dark: NSMutableDictionary)` | function | Can override the whole dark theme or just some specific color. |
